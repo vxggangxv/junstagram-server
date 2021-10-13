@@ -1,0 +1,30 @@
+{
+  "name": "junstagram-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec babel-node server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vxggangxv/junstagram-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vxggangxv/junstagram-server/issues"
+  },
+  "homepage": "https://github.com/vxggangxv/junstagram-server#readme",
+  "dependencies": {
+    "apollo-server": "^2.25.2",
+    "graphql": "^15.6.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/node": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "nodemon": "^2.0.13"
+  }
+}
