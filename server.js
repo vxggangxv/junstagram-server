@@ -1,54 +1,90 @@
-// const { ApolloServer, gql } = require("apollo-server");
-import { PrismaClient } from "@prisma/client";
-import { ApolloServer, gql } from "apollo-server";
+require('dotenv').config();
+import { ApolloServer } from 'apollo-server';
+import { gql } from 'apollo-server';
+import client from './client';
+import bcrypt from 'bcrypt';
+import schema from './schema';
+// import typeDefs from './users/users.typeDefs';
+// import resolvers from './users/users.mutations';
 
-const client = new PrismaClient();
+const PORT = process.env.PORT;
+// const client = new PrismaClient();
 
 const typeDefs = gql`
-  type Movie {
-    id: Int!
-    title: String!
-    year: Int!
-    genre: String
-    createAt: String!
-    updateAt: String!
-  }
-  type Query {
-    movies: [Movie]
-    movie(id: Int!): Movie
+  type User {
+    id: String!
+    firstName: String!
+    lastName: String
+    username: String!
+    email: String!
+    createdAt: String!
+    updatedAt: String!
   }
   type Mutation {
-    createMovie(title: String!, year: Int!, genre: String): Movie
-    deleteMovie(id: Int!): Movie
-    updateMovie(id: Int!, year: Int!): Movie
+    createAccount(
+      firstName: String!
+      lastName: String
+      username: String!
+      email: String!
+      password: String!
+    ): User
+  }
+  type Query {
+    seeProfile(username: String!): User
   }
 `;
 
 const resolvers = {
   Query: {
-    movies: () => client.movie.findMany(),
-    movie: (_, { id }) => client.movie.findUnique({ where: { id } }),
+    seeProfile: (_, { username }) => {},
   },
   Mutation: {
-    createMovie: (root, { title, year, genre }, context, info) =>
-      client.movie.create({
-        data: {
-          title,
-          year,
-          genre,
-        },
-      }),
-    deleteMovie: (_, { id }) => client.movie.delete({ where: { id } }),
-    updateMovie: (_, { id, year }) =>
-      client.movie.update({ where: { id }, data: { year } }),
+    createAccount: async (
+      _,
+      { firstName, lastName, username, email, password }
+    ) => {
+      try {
+        console.log('createAccount');
+        // check if username or email are already on DB.
+        const existingUser = await client.user.findFirst({
+          where: {
+            OR: [
+              {
+                username,
+              },
+              {
+                email,
+              },
+            ],
+          },
+        });
+        console.log(existingUser);
+        const uglyPassword = await bcrypt.hash(password, 10);
+        console.log(uglyPassword);
+        return client.user.create({
+          data: {
+            firstName,
+            lastName,
+            username,
+            email,
+            password: uglyPassword,
+          },
+        });
+        // hash password
+        // save and return the user
+      } catch (error) {
+        console.log('error', error);
+      }
+    },
   },
 };
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema,
+  // typeDefs,
+  // resolvers,
 });
 
 server
-  .listen()
-  .then(() => console.log("Server is running on http://localhost:4000/"));
+  .listen(PORT)
+  .then(() => console.log(`Server is running on http://localhost:${PORT}/`));
