@@ -37,3 +37,4 @@ const resolvers = {
       client.movie.update({ where: { id }, data: { year } }),
   },
 };
+

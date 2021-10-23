@@ -1,4 +1,4 @@
-import client from '../client';
+import client from 'client';
 import bcrypt from 'bcrypt';
 
 export default {
@@ -8,7 +8,6 @@ export default {
       { firstName, lastName, username, email, password }
     ) => {
       try {
-        console.log('createAccount');
         // check if username or email are already on DB.
         const existingUser = await client.user.findFirst({
           where: {
@@ -22,8 +21,9 @@ export default {
             ],
           },
         });
-        console.log(existingUser);
-        if (existingUser) return;
+        if (existingUser) {
+          throw new Error('This username/password is already taken.');
+        }
         const uglyPassword = await bcrypt.hash(password, 10);
         console.log(uglyPassword);
         return client.user.create({
@@ -38,7 +38,11 @@ export default {
         // hash password
         // save and return the user
       } catch (error) {
-        console.log('error', error);
+        // console.log('error', error);
+        return {
+          ok: false,
+          error: `Can't create account.`,
+        };
       }
     },
   },
