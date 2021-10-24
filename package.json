@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/server --delay 1",
+    "dev": "nodemon --exec babel-node src/server --delay 1.5",
     "migrate": "npx prisma migrate dev",
     "studio": "npx prisma studio"
   },
@@ -21,6 +21,7 @@
   "homepage": "https://github.com/vxggangxv/junstagram-server#readme",
   "dependencies": {
     "@prisma/client": "^3.2.1",
+    "apollo-server": "^3.4.0",
     "apollo-server-core": "^3.4.0",
     "apollo-server-express": "^3.4.0",
     "bcrypt": "^5.0.1",
@@ -28,6 +29,7 @@
     "express": "^4.17.1",
     "graphql": "^15.6.1",
     "graphql-tools": "^7.0.2",
+    "graphql-upload": "^12.0.0",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0"
   },

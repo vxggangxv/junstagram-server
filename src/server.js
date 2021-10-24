@@ -4,6 +4,9 @@ import express from 'express';
 import logger from 'morgan';
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import {
+  graphqlUploadExpress, // A Koa implementation is also exported.
+} from 'graphql-upload';
 import { typeDefs, resolvers } from './schema';
 import { getUser } from './users/users.utils';
 
@@ -14,8 +17,8 @@ async function startApolloServer(typeDefs, resolvers) {
   const app = express();
 
   app.use('/uploads', express.static('uploads'));
-  // server.applyMiddleware({ app, path: '/' });
-  // app.use(logger('dev'));
+  app.use(logger('dev'));
+  app.use(graphqlUploadExpress());
 
   const httpServer = http.createServer(app);
 
@@ -24,6 +27,7 @@ async function startApolloServer(typeDefs, resolvers) {
     resolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     context: async ({ req }) => {
+      // console.log('req.headers.token', req.headers.token);
       return {
         loggedInUser: await getUser(req.headers.token),
       };
@@ -31,6 +35,7 @@ async function startApolloServer(typeDefs, resolvers) {
   });
   await server.start();
   server.applyMiddleware({ app });
+  // server.applyMiddleware({ app, path: '/' });
 
   await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 

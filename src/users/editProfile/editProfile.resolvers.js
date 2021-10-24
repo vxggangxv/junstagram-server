@@ -1,13 +1,22 @@
 import client from '../../client';
 import jwt from 'jsonwebtoken';
 import { protectedResolver } from '../users.utils';
+import { createWriteStream } from 'fs';
 
 export default {
   Mutation: {
     editProfile: protectedResolver(
       async (
         _,
-        { firstName, lastName, username, email, password: newPassword },
+        {
+          firstName,
+          lastName,
+          username,
+          email,
+          password: newPassword,
+          bio,
+          avatar,
+        },
         { loggedInUser }
       ) => {
         try {
@@ -20,6 +29,19 @@ export default {
           //     error: '401',
           //   };
           // }
+          // avatar url
+          let avatarUrl = null;
+          if (avatar) {
+            // avatarUrl = await uploadToS3(avatar, loggedInUser.id, "avatars");
+            const { filename, createReadStream } = await avatar;
+            const newFilename = `${loggedInUser.id}-${Date.now()}-${filename}`;
+            const readStream = createReadStream();
+            const writeStream = createWriteStream(
+              process.cwd() + '/uploads/' + newFilename
+            );
+            readStream.pipe(writeStream);
+            avatarUrl = `http://localhost:4000/uploads/${newFilename}`;
+          }
           // password convert uglyPassword
           let uglyPassword = null;
           if (newPassword) {
@@ -35,7 +57,9 @@ export default {
               lastName,
               username,
               email,
+              bio,
               ...(uglyPassword && { password: uglyPassword }),
+              ...(avatarUrl && { avatar: avatarUrl }),
             },
           });
           if (updatedUser.id) {
