@@ -1,5 +1,10 @@
 import { gql } from 'apollo-server-core';
-import { loadFilesSync, mergeTypeDefs, mergeResolvers } from 'graphql-tools';
+import {
+  loadFilesSync,
+  mergeTypeDefs,
+  mergeResolvers,
+  makeExecutableSchema,
+} from 'graphql-tools';
 import { GraphQLUpload } from 'graphql-upload';
 
 const loadedTypeDefs = loadFilesSync(`${__dirname}/**/*.typeDefs.js`);
@@ -14,3 +19,7 @@ const etcResolvers = {
 
 export const typeDefs = mergeTypeDefs([...loadedTypeDefs, etcTypeDefs]);
 export const resolvers = mergeResolvers([...loadedResolvers, etcResolvers]);
+
+export const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+export default schema;

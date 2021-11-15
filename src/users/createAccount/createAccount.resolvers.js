@@ -1,5 +1,7 @@
 import client from 'client';
 import bcrypt from 'bcrypt';
+import pubsub from 'pubSub';
+import { USER_CREATED } from 'constants';
 
 export default {
   Mutation: {
@@ -28,7 +30,7 @@ export default {
         const uglyPassword = await bcrypt.hash(password, 10);
         // console.log(uglyPassword);
         // save and return the user
-        await client.user.create({
+        const user = await client.user.create({
           data: {
             firstName,
             lastName,
@@ -37,6 +39,9 @@ export default {
             password: uglyPassword,
           },
         });
+
+        pubsub.publish(USER_CREATED, { userCreated: { ...user } });
+
         return {
           ok: true,
         };

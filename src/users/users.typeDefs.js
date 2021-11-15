@@ -12,4 +12,8 @@ export default gql`
     createdAt: String!
     updatedAt: String!
   }
+
+  type Subscription {
+    userCreated: User
+  }
 `;
