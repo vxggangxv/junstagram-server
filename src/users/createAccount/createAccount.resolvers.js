@@ -40,7 +40,8 @@ export default {
           },
         });
 
-        pubsub.publish(USER_CREATED, { userCreated: { ...user } });
+        // test pubsub code
+        // pubsub.publish(USER_CREATED, { userCreated: { ...user } });
 
         return {
           ok: true,

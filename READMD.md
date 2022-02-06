@@ -1,1 +1,3 @@
-# junstagram apollo graphql server
+# Junstram Server
+
+- apollographql v3, apollo-server-express, prisma

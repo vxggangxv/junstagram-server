@@ -26,7 +26,7 @@ export default {
         expiresIn: '7d',
       });
       return {
-        ok: false,
+        ok: true,
         token,
       };
     },
